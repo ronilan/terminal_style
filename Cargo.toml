@@ -3,7 +3,11 @@ name = "terminal_style"
 version = "0.1.0"
 edition = "2021"
 
-[dependencies]
+description = "A minimal library for styling terminal text using ANSI escape codes."
+license = "MIT"
+documentation = "https://docs.rs/terminal_style"
+homepage = "https://github.com/ronilan/terminal_style"
+repository = "https://github.com/ronilan/terminal_style"
 
 [dev-dependencies]
 rand = "0.8"
