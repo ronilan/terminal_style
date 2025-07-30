@@ -1,4 +1,7 @@
-use terminal_style::color::{ansi8_to_hex, ansi8_to_rgb, rgb_to_ansi8, rgb_to_hex};
+use terminal_style::color::{
+    ansi8_to_hex, ansi8_to_rgb, rgb_to_ansi8, rgb_to_hex, validate_ansi, validate_hex,
+    ColorConversionError,
+};
 
 #[test]
 fn test_rgb_to_hex() {
@@ -50,4 +53,66 @@ fn test_ansi8_to_hex_roundtrip() {
         let rgb = ansi8_to_rgb(code);
         assert_eq!(hex, rgb_to_hex(rgb));
     }
+}
+
+#[test]
+fn test_validate_hex_valid_inputs() {
+    let valid_hexes = [
+        "#fff",    // shorthand hex
+        "#FFFFFF", // full uppercase
+        "#000000", // full lowercase
+        "abc",     // no #
+        "123456",  // valid digits
+    ];
+
+    for input in valid_hexes {
+        assert!(
+            validate_hex(input).is_ok(),
+            "Expected '{}' to be valid",
+            input
+        );
+    }
+}
+
+#[test]
+fn test_validate_hex_invalid_inputs() {
+    let cases = [
+        ("", "empty string"),
+        ("#", "just a hash"),
+        ("#12", "too short"),
+        ("#1234", "invalid length"),
+        ("#12345g", "contains non-hex digit"),
+        ("12345z", "non-hex without #"),
+        ("#abcd", "length 4 invalid"),
+        ("##123456", "extra hash"),
+    ];
+
+    for (input, description) in cases {
+        assert!(
+            validate_hex(input).is_err(),
+            "Expected '{}' to be invalid ({})",
+            input,
+            description
+        );
+    }
+}
+
+#[test]
+fn test_validate_ansi_valid_values() {
+    assert!(validate_ansi(0).is_ok());
+    assert!(validate_ansi(128).is_ok());
+    assert!(validate_ansi(255).is_ok());
+}
+
+#[test]
+fn test_validate_ansi_invalid_values() {
+    assert!(matches!(
+        validate_ansi(-1),
+        Err(ColorConversionError::InvalidAnsiValue(-1))
+    ));
+
+    assert!(matches!(
+        validate_ansi(256),
+        Err(ColorConversionError::InvalidAnsiValue(256))
+    ));
 }

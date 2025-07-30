@@ -4,7 +4,7 @@ use std::fmt;
 pub enum ColorConversionError {
     InvalidHex(String),
     InvalidRgb(String),
-    InvalidAnsiValue(u8),
+    InvalidAnsiValue(i32),
     UnknownFormat(String),
 }
 

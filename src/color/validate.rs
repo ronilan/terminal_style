@@ -35,3 +35,21 @@ pub fn validate_hex(input: &str) -> Result<(), ColorConversionError> {
 
     Ok(())
 }
+
+/// Validates that an ANSI color value is within the 0–255 range.
+///
+/// # Arguments
+///
+/// * `value` - An integer value to validate.
+///
+/// # Returns
+///
+/// * `Ok(())` if the value is between 0 and 255 inclusive.
+/// * `Err(ColorConversionError::InvalidAnsiValue)` if the value is out of range.
+pub fn validate_ansi(value: i32) -> Result<(), ColorConversionError> {
+    if !(0..=255).contains(&value) {
+        return Err(ColorConversionError::InvalidAnsiValue(value));
+    }
+
+    Ok(())
+}
