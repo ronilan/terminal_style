@@ -6,11 +6,10 @@ A minimal Rust library for styling terminal text using ANSI escape codes. Suppor
 
 ## Installation
 
-Add this to your `Cargo.toml`:
+`terminal_style` is published as a [crate](https://crates.io/crates/terminal_style) on crates.io.
 
-```toml
-[dependencies]
-terminal_style = { path = "." }
+```bash
+cargo install terminal_style
 ```
 
 ## Features
