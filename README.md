@@ -1,6 +1,6 @@
 # terminal_style
 
-A minimal Rust library for styling terminal text using ANSI escape codes. Supports 256-color and bold, italic, faint, and inverse formatting. Easily apply foreground/background colors from hex, RGB, or ANSI 8-bit values.
+A minimal Rust library for styling terminal text using ANSI escape codes. Supports 256-color and bold, italic, faint, and inverse formatting. Easily apply foreground/background colors from hex, RGB, or ANSI 8-bit values. Good for simple CLI tools.
 
 <img src="./media/social.png" width="450"> 
 
