@@ -9,7 +9,7 @@ A minimal Rust library for styling terminal text using ANSI escape codes. Suppor
 `terminal_style` is published as a [crate](https://crates.io/crates/terminal_style) on crates.io.
 
 ```bash
-cargo install terminal_style
+cargo add terminal_style
 ```
 
 ## Features
