@@ -16,7 +16,7 @@ cargo add terminal_style
 
 - Convert RGB or Hex to ANSI 256-color
 - Apply foreground/background color to strings
-- Format text as **bold**, *italic*, faint, or inverse
+- Format text as **bold**, *italic*, faint, inverse, or underline
 - Graceful handling of invalid color inputs
 
 ## Usage

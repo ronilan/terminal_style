@@ -1,4 +1,4 @@
-use terminal_style::format::{background, bold, color, faint, inverse, italic};
+use terminal_style::format::{background, bold, color, faint, inverse, italic, underline};
 
 #[test]
 fn test_background_with_rgb_array() {
@@ -102,6 +102,20 @@ fn test_inverse_empty_string() {
     let text = "";
     let result = inverse(text);
     assert_eq!(result, "\x1b[7m\x1b[0m");
+}
+
+#[test]
+fn test_underline() {
+    let text = "Hello, World!";
+    let result = underline(text);
+    assert_eq!(result, "\x1b[4mHello, World!\x1b[0m");
+}
+
+#[test]
+fn test_underline_empty_string() {
+    let text = "";
+    let result = underline(text);
+    assert_eq!(result, "\x1b[4m\x1b[0m");
 }
 
 #[test]

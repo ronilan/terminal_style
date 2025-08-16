@@ -13,3 +13,8 @@ pub fn faint(text: &str) -> String {
 pub fn inverse(text: &str) -> String {
     format!("\x1b[7m{}\x1b[0m", text)
 }
+
+pub fn underline(text: &str) -> String {
+    format!("\x1b[4m{}\x1b[0m", text)
+}
+
