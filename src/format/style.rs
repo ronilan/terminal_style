@@ -17,4 +17,3 @@ pub fn inverse(text: &str) -> String {
 pub fn underline(text: &str) -> String {
     format!("\x1b[4m{}\x1b[0m", text)
 }
-
