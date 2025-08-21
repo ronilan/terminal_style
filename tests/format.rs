@@ -202,3 +202,186 @@ fn test_formatting_differences() {
     assert!(faint_result.ends_with("\x1b[0m"));
     assert!(inverse_result.ends_with("\x1b[0m"));
 }
+
+#[test]
+fn test_vector_foreground() {
+    let texts = vec!["Red".to_string(), "Green".to_string(), "Blue".to_string()];
+    let colored: Vec<String> = color(196u8, texts.clone()).unwrap(); // ANSI Red
+    let expected: Vec<String> = texts
+        .iter()
+        .map(|t| format!("\x1b[38;5;196m{}\x1b[0m", t))
+        .collect();
+    assert_eq!(colored, expected);
+}
+
+#[test]
+fn test_vector_background() {
+    let texts = vec!["Red".to_string(), "Green".to_string(), "Blue".to_string()];
+    let bg_colored: Vec<String> = background(21u8, texts.clone()).unwrap(); // ANSI Blue BG
+    let expected: Vec<String> = texts
+        .iter()
+        .map(|t| format!("\x1b[48;5;21m{}\x1b[0m", t))
+        .collect();
+    assert_eq!(bg_colored, expected);
+}
+
+#[test]
+fn test_bold_vector() {
+    let texts = vec!["A".to_string(), "B".to_string()];
+    let styled: Vec<String> = bold(texts.clone()); // directly on Vec<String>
+    let expected: Vec<String> = texts
+        .iter()
+        .map(|t| format!("\x1b[1m{}\x1b[0m", t))
+        .collect();
+    assert_eq!(styled, expected);
+}
+
+#[test]
+fn test_italic_vector() {
+    let texts = vec!["A".to_string(), "B".to_string()];
+    let styled: Vec<String> = italic(texts.clone());
+    let expected: Vec<String> = texts
+        .iter()
+        .map(|t| format!("\x1b[3m{}\x1b[0m", t))
+        .collect();
+    assert_eq!(styled, expected);
+}
+
+#[test]
+fn test_faint_vector() {
+    let texts = vec!["A".to_string(), "B".to_string()];
+    let styled: Vec<String> = faint(texts.clone());
+    let expected: Vec<String> = texts
+        .iter()
+        .map(|t| format!("\x1b[2m{}\x1b[0m", t))
+        .collect();
+    assert_eq!(styled, expected);
+}
+
+#[test]
+fn test_inverse_vector() {
+    let texts = vec!["A".to_string(), "B".to_string()];
+    let styled: Vec<String> = inverse(texts.clone());
+    let expected: Vec<String> = texts
+        .iter()
+        .map(|t| format!("\x1b[7m{}\x1b[0m", t))
+        .collect();
+    assert_eq!(styled, expected);
+}
+
+#[test]
+fn test_underline_vector() {
+    let texts = vec!["A".to_string(), "B".to_string()];
+    let styled: Vec<String> = underline(texts.clone());
+    let expected: Vec<String> = texts
+        .iter()
+        .map(|t| format!("\x1b[4m{}\x1b[0m", t))
+        .collect();
+    assert_eq!(styled, expected);
+}
+
+#[test]
+fn test_bold_2d_vector() {
+    let texts_2d = vec![
+        vec!["A".to_string(), "B".to_string()],
+        vec!["C".to_string(), "D".to_string()],
+    ];
+    let styled: Vec<Vec<String>> = bold(texts_2d.clone()); // directly on Vec<Vec<String>>
+    let expected: Vec<Vec<String>> = texts_2d
+        .iter()
+        .map(|row| row.iter().map(|t| format!("\x1b[1m{}\x1b[0m", t)).collect())
+        .collect();
+    assert_eq!(styled, expected);
+}
+
+#[test]
+fn test_italic_2d_vector() {
+    let texts_2d = vec![
+        vec!["A".to_string(), "B".to_string()],
+        vec!["C".to_string(), "D".to_string()],
+    ];
+    let styled: Vec<Vec<String>> = italic(texts_2d.clone());
+    let expected: Vec<Vec<String>> = texts_2d
+        .iter()
+        .map(|row| row.iter().map(|t| format!("\x1b[3m{}\x1b[0m", t)).collect())
+        .collect();
+    assert_eq!(styled, expected);
+}
+
+#[test]
+fn test_faint_2d_vector() {
+    let texts_2d = vec![
+        vec!["A".to_string(), "B".to_string()],
+        vec!["C".to_string(), "D".to_string()],
+    ];
+    let styled: Vec<Vec<String>> = faint(texts_2d.clone());
+    let expected: Vec<Vec<String>> = texts_2d
+        .iter()
+        .map(|row| row.iter().map(|t| format!("\x1b[2m{}\x1b[0m", t)).collect())
+        .collect();
+    assert_eq!(styled, expected);
+}
+
+#[test]
+fn test_inverse_2d_vector() {
+    let texts_2d = vec![
+        vec!["A".to_string(), "B".to_string()],
+        vec!["C".to_string(), "D".to_string()],
+    ];
+    let styled: Vec<Vec<String>> = inverse(texts_2d.clone());
+    let expected: Vec<Vec<String>> = texts_2d
+        .iter()
+        .map(|row| row.iter().map(|t| format!("\x1b[7m{}\x1b[0m", t)).collect())
+        .collect();
+    assert_eq!(styled, expected);
+}
+
+#[test]
+fn test_underline_2d_vector() {
+    let texts_2d = vec![
+        vec!["A".to_string(), "B".to_string()],
+        vec!["C".to_string(), "D".to_string()],
+    ];
+    let styled: Vec<Vec<String>> = underline(texts_2d.clone());
+    let expected: Vec<Vec<String>> = texts_2d
+        .iter()
+        .map(|row| row.iter().map(|t| format!("\x1b[4m{}\x1b[0m", t)).collect())
+        .collect();
+    assert_eq!(styled, expected);
+}
+
+#[test]
+fn test_2d_vector_foreground() {
+    let texts_2d = vec![
+        vec!["One".to_string(), "Two".to_string()],
+        vec!["Three".to_string(), "Four".to_string()],
+    ];
+    let colored_2d: Vec<Vec<String>> = color(46u8, texts_2d.clone()).unwrap(); // ANSI Green
+    let expected_2d: Vec<Vec<String>> = texts_2d
+        .iter()
+        .map(|row| {
+            row.iter()
+                .map(|t| format!("\x1b[38;5;46m{}\x1b[0m", t))
+                .collect()
+        })
+        .collect();
+    assert_eq!(colored_2d, expected_2d);
+}
+
+#[test]
+fn test_2d_vector_background() {
+    let texts_2d = vec![
+        vec!["One".to_string(), "Two".to_string()],
+        vec!["Three".to_string(), "Four".to_string()],
+    ];
+    let bg_colored_2d: Vec<Vec<String>> = background(226u8, texts_2d.clone()).unwrap(); // ANSI Yellow BG
+    let expected_bg_2d: Vec<Vec<String>> = texts_2d
+        .iter()
+        .map(|row| {
+            row.iter()
+                .map(|t| format!("\x1b[48;5;226m{}\x1b[0m", t))
+                .collect()
+        })
+        .collect();
+    assert_eq!(bg_colored_2d, expected_bg_2d);
+}

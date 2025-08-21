@@ -1,5 +1,6 @@
-pub mod color_apply;
-pub mod style;
+pub mod colors;
+pub mod stylable;
+pub mod text;
 
-pub use color_apply::{background, color};
-pub use style::{bold, faint, inverse, italic, underline};
+pub use colors::{background, color};
+pub use text::{bold, faint, inverse, italic, underline};
