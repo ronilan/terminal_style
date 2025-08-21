@@ -52,6 +52,26 @@ impl Stylable for &str {
     }
 }
 
+// Implement Stylable for &String
+impl Stylable for &String {
+    type Output = String;
+
+    fn apply<F>(&self, f: F) -> Self::Output
+    where
+        F: Fn(&str) -> String,
+    {
+        f(self.as_str())
+    }
+
+    fn apply_result<F, E>(&self, f: F) -> Result<Self::Output, E>
+    where
+        F: Fn(&str) -> Result<String, E>,
+        E: std::fmt::Debug,
+    {
+        f(self.as_str())
+    }
+}
+
 impl Stylable for Vec<String> {
     type Output = Vec<String>;
 
@@ -103,3 +123,44 @@ impl Stylable for Vec<Vec<String>> {
         Ok(out)
     }
 }
+
+// Forward &Vec<String> to Vec<String>
+impl Stylable for &Vec<String> {
+    type Output = Vec<String>;
+
+    fn apply<F>(&self, f: F) -> Self::Output
+    where
+        F: Fn(&str) -> String,
+    {
+        (*self).apply(f)
+    }
+
+    fn apply_result<F, E>(&self, f: F) -> Result<Self::Output, E>
+    where
+        F: Fn(&str) -> Result<String, E>,
+        E: std::fmt::Debug,
+    {
+        (*self).apply_result(f)
+    }
+}
+
+// Forward &Vec<Vec<String>> to Vec<Vec<String>>
+impl Stylable for &Vec<Vec<String>> {
+    type Output = Vec<Vec<String>>;
+
+    fn apply<F>(&self, f: F) -> Self::Output
+    where
+        F: Fn(&str) -> String,
+    {
+        (*self).apply(f)
+    }
+
+    fn apply_result<F, E>(&self, f: F) -> Result<Self::Output, E>
+    where
+        F: Fn(&str) -> Result<String, E>,
+        E: std::fmt::Debug,
+    {
+        (*self).apply_result(f)
+    }
+}
+

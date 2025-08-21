@@ -204,6 +204,72 @@ fn test_formatting_differences() {
 }
 
 #[test]
+fn test_bold_ref_string() {
+    let s = String::from("Hello");
+    let result = bold(&s);
+    assert_eq!(result, "\x1b[1mHello\x1b[0m");
+}
+
+#[test]
+fn test_color_ref_string() {
+    let s = String::from("Red");
+    let result: String = color(196u8, &s).unwrap();
+    assert_eq!(result, "\x1b[38;5;196mRed\x1b[0m");
+}
+
+#[test]
+fn test_bold_ref_vector() {
+    let texts = vec!["A".to_string(), "B".to_string()];
+    let styled: Vec<String> = bold(&texts); // use reference
+    let expected: Vec<String> = texts
+        .iter()
+        .map(|t| format!("\x1b[1m{}\x1b[0m", t))
+        .collect();
+    assert_eq!(styled, expected);
+}
+
+#[test]
+fn test_color_ref_vector() {
+    let texts = vec!["Red".to_string(), "Blue".to_string()];
+    let styled: Vec<String> = color(196u8, &texts).unwrap();
+    let expected: Vec<String> = texts
+        .iter()
+        .map(|t| format!("\x1b[38;5;196m{}\x1b[0m", t))
+        .collect();
+    assert_eq!(styled, expected);
+}
+
+#[test]
+fn test_bold_ref_2d_vector() {
+    let texts_2d = vec![
+        vec!["A".to_string(), "B".to_string()],
+        vec!["C".to_string(), "D".to_string()],
+    ];
+    let styled: Vec<Vec<String>> = bold(&texts_2d); // reference
+    let expected: Vec<Vec<String>> = texts_2d
+        .iter()
+        .map(|row| row.iter().map(|t| format!("\x1b[1m{}\x1b[0m", t)).collect())
+        .collect();
+    assert_eq!(styled, expected);
+}
+
+#[test]
+fn test_color_ref_2d_vector() {
+    let texts_2d = vec![
+        vec!["One".to_string(), "Two".to_string()],
+        vec!["Three".to_string(), "Four".to_string()],
+    ];
+    let styled: Vec<Vec<String>> = color(46u8, &texts_2d).unwrap(); // reference
+    let expected: Vec<Vec<String>> = texts_2d
+        .iter()
+        .map(|row| row.iter().map(|t| format!("\x1b[38;5;46m{}\x1b[0m", t)).collect())
+        .collect();
+    assert_eq!(styled, expected);
+}
+
+
+
+#[test]
 fn test_vector_foreground() {
     let texts = vec!["Red".to_string(), "Green".to_string(), "Blue".to_string()];
     let colored: Vec<String> = color(196u8, texts.clone()).unwrap(); // ANSI Red

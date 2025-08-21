@@ -1,6 +1,6 @@
 # terminal_style
 
-A minimal Rust library for styling terminal text using ANSI escape codes. Supports 256-color and bold, italic, faint, underline and inverse formatting. Easily apply foreground/background colors from hex, RGB, or ANSI 8-bit values to as well as to 1D and 2D vectors of text. Good for simple CLI tools.
+A minimal Rust library for styling terminal text using ANSI escape codes. Supports 256-color as well as bold, italic, faint, underline, and inverse formatting. Easily apply foreground/background colors from hex, RGB, or ANSI 8-bit values to strings, 1D vectors, and 2D vectors. Perfect for simple CLI tools.
 
 <img src="./media/social.png" width="450"> 
 
@@ -21,7 +21,25 @@ cargo add terminal_style
 
 ## Usage
 
+Formatting functions work with strings, vectors, and 2D vectors of strings seamlessly. It also supports references, so you can pass either owned or borrowed values.
+
+### Supported Input Types
+
+| Input Type           | Output Type       | Description                                |
+|----------------------|-----------------|--------------------------------------------|
+| `String`             | `String`        | Single string formatting                   |
+| `&str`               | `String`        | Single string formatting                   |
+| `&String`            | `String`        | Reference forwarding to `String`          |
+| `Vec<String>`        | `Vec<String>`   | Format each element individually           |
+| `&Vec<String>`       | `Vec<String>`   | Reference forwarding to owned `Vec<String>`|
+| `Vec<Vec<String>>`   | `Vec<Vec<String>>` | Format every element in each subvector  |
+| `&Vec<Vec<String>>`  | `Vec<Vec<String>>` | Reference forwarding to owned `Vec<Vec<String>>` |
+
+
+### Example 
+
 ```rust
+
 use terminal_style::{
     format::{bold, underline, color, background},
     color::ColorConversionError,
@@ -30,9 +48,11 @@ use terminal_style::{
 fn main() -> Result<(), ColorConversionError> {
     // --- Single string styling ---
     let text = "Styled!";
-    let fg = color("#FF1493", text)?;       // Foreground color (orange)
-    let bg = background("#EEDDFF", text)?;   // Background color (green)
-    let bolded = bold(fg.clone());                  // Bold formatting
+
+    // Using `?` to propagate errors if color conversion fails
+    let fg = color("#FF1493", text)?;       // Foreground color (pink)
+    let bg = background("#EEDDFF", text)?;  // Background color (lavender)
+    let bolded = bold(fg.clone());          // Bold formatting
 
     println!("FG: {}", fg);
     println!("BG: {}", bg);
@@ -60,9 +80,10 @@ fn main() -> Result<(), ColorConversionError> {
     ];
 
     let bolded_2d: Vec<Vec<String>> = bold(texts_2d.clone());
-    let bg_colored_2d = background([255, 105, 180], texts_2d.clone())?; // Green background
+    let bg_colored_2d = background([255, 105, 180], texts_2d.clone())?; // Pink background
     let bold_underline_bg_2d = bold(underline(bg_colored_2d.clone()));
 
+    // Output demo
     println!("\n2D Bold vector:");
     for row in &bolded_2d {
         for cell in row {
@@ -89,9 +110,12 @@ fn main() -> Result<(), ColorConversionError> {
 
     Ok(())
 }
+
 ```
 
 ## Color Conversion Examples
+
+Utility functions enable converting between RGB, HEX, and ANSI 8-bit values.
 
 ```rust
 use terminal_style::color::*;

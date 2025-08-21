@@ -6,9 +6,11 @@ use terminal_style::{
 fn main() -> Result<(), ColorConversionError> {
     // --- Single string styling ---
     let text = "Styled!";
-    let fg = color("#FF1493", text)?;       // Foreground color (orange)
-    let bg = background("#EEDDFF", text)?;   // Background color (green)
-    let bolded = bold(fg.clone());                  // Bold formatting
+
+    // Using `?` to propagate errors if color conversion fails
+    let fg = color("#FF1493", text)?;       // Foreground color (pink)
+    let bg = background("#EEDDFF", text)?;  // Background color (lavender)
+    let bolded = bold(fg.clone());          // Bold formatting
 
     println!("FG: {}", fg);
     println!("BG: {}", bg);
@@ -36,9 +38,10 @@ fn main() -> Result<(), ColorConversionError> {
     ];
 
     let bolded_2d: Vec<Vec<String>> = bold(texts_2d.clone());
-    let bg_colored_2d = background([255, 105, 180], texts_2d.clone())?; // Green background
+    let bg_colored_2d = background([255, 105, 180], texts_2d.clone())?; // Pink background
     let bold_underline_bg_2d = bold(underline(bg_colored_2d.clone()));
 
+    // Output demo
     println!("\n2D Bold vector:");
     for row in &bolded_2d {
         for cell in row {
