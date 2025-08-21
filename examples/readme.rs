@@ -1,6 +1,6 @@
 use terminal_style::{
-    format::{bold, underline, color, background},
     color::ColorConversionError,
+    format::{background, bold, color, underline},
 };
 
 fn main() -> Result<(), ColorConversionError> {
@@ -8,9 +8,9 @@ fn main() -> Result<(), ColorConversionError> {
     let text = "Styled!";
 
     // Using `?` to propagate errors if color conversion fails
-    let fg = color("#FF1493", text)?;       // Foreground color (pink)
-    let bg = background("#EEDDFF", text)?;  // Background color (lavender)
-    let bolded = bold(fg.clone());          // Bold formatting
+    let fg = color("#FF1493", text)?; // Foreground color (pink)
+    let bg = background("#EEDDFF", text)?; // Background color (lavender)
+    let bolded = bold(fg.clone()); // Bold formatting
 
     println!("FG: {}", fg);
     println!("BG: {}", bg);
@@ -18,7 +18,7 @@ fn main() -> Result<(), ColorConversionError> {
 
     // --- 1D vector of strings ---
     let texts_1d = vec!["Red".to_string(), "Green".to_string(), "Blue".to_string()];
-    let colored_1d = color([255, 0, 0], texts_1d.clone())?;  // Red foreground
+    let colored_1d = color([255, 0, 0], texts_1d.clone())?; // Red foreground
     let bolded_1d = bold(texts_1d.clone());
 
     println!("\n1D Colored vector:");

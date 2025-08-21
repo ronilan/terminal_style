@@ -3,6 +3,9 @@ use terminal_style::color::{
     ColorConversionError,
 };
 
+//
+// 1. RGB ↔ Hex
+//
 #[test]
 fn test_rgb_to_hex() {
     assert_eq!(rgb_to_hex([255, 0, 0]), "#FF0000");
@@ -13,11 +16,14 @@ fn test_rgb_to_hex() {
     assert_eq!(rgb_to_hex([255, 255, 255]), "#FFFFFF");
 }
 
+//
+// 2. RGB → ANSI8
+//
 #[test]
 fn test_rgb_to_ansi8_color_cube() {
     assert_eq!(rgb_to_ansi8([255, 0, 0]), 196); // Red
-    assert_eq!(rgb_to_ansi8([0, 255, 0]), 46); // Green
-    assert_eq!(rgb_to_ansi8([0, 0, 255]), 21); // Blue
+    assert_eq!(rgb_to_ansi8([0, 255, 0]), 46);  // Green
+    assert_eq!(rgb_to_ansi8([0, 0, 255]), 21);  // Blue
     assert_eq!(rgb_to_ansi8([255, 255, 0]), 226); // Yellow
     assert_eq!(rgb_to_ansi8([0, 255, 255]), 51); // Cyan
     assert_eq!(rgb_to_ansi8([255, 0, 255]), 201); // Magenta
@@ -25,16 +31,20 @@ fn test_rgb_to_ansi8_color_cube() {
 
 #[test]
 fn test_rgb_to_ansi8_grayscale() {
-    assert_eq!(rgb_to_ansi8([0, 0, 0]), 16); // Black
+    assert_eq!(rgb_to_ansi8([0, 0, 0]), 16);       // Black
     assert_eq!(rgb_to_ansi8([128, 128, 128]), 244); // Middle gray
-    assert_eq!(rgb_to_ansi8([255, 255, 255]), 231); // White from main palette
+    assert_eq!(rgb_to_ansi8([255, 255, 255]), 231); // White
 }
 
+
+//
+// 3. ANSI8 → RGB
+//
 #[test]
 fn test_ansi8_to_rgb_standard_colors() {
     assert_eq!(ansi8_to_rgb(196), [255, 0, 0]); // Red
-    assert_eq!(ansi8_to_rgb(46), [0, 255, 0]); // Green
-    assert_eq!(ansi8_to_rgb(21), [0, 0, 255]); // Blue
+    assert_eq!(ansi8_to_rgb(46), [0, 255, 0]);  // Green
+    assert_eq!(ansi8_to_rgb(21), [0, 0, 255]);  // Blue
     assert_eq!(ansi8_to_rgb(231), [255, 255, 255]); // Last in color cube
 }
 
@@ -45,6 +55,10 @@ fn test_ansi8_to_rgb_grayscale_range() {
     assert_eq!(ansi8_to_rgb(255), [238, 238, 238]);
 }
 
+
+//
+// 4. Round-trip conversions
+//
 #[test]
 fn test_ansi8_to_hex_roundtrip() {
     let ansi_values = [16u8, 46, 196, 226, 231, 243, 255];
@@ -55,23 +69,24 @@ fn test_ansi8_to_hex_roundtrip() {
     }
 }
 
+//
+// 5. Hex validation
+//
 #[test]
 fn test_validate_hex_valid_inputs() {
     let valid_hexes = [
-        "#fff",    // shorthand hex
-        "#FFFFFF", // full uppercase
-        "#000000", // full lowercase
-        "abc",     // no #
-        "123456",  // valid digits
+        "#fff", "#FFFFFF", "#000000", "abc", "123456",
     ];
 
     for input in valid_hexes {
-        assert!(
-            validate_hex(input).is_ok(),
-            "Expected '{}' to be valid",
-            input
-        );
+        assert!(validate_hex(input).is_ok(), "Expected '{}' to be valid", input);
     }
+}
+
+#[test]
+fn test_validate_hex_mixed_case() {
+    assert!(validate_hex("#AbC123").is_ok());
+    assert!(validate_hex("aBcDeF").is_ok());
 }
 
 #[test]
@@ -87,16 +102,14 @@ fn test_validate_hex_invalid_inputs() {
         ("##123456", "extra hash"),
     ];
 
-    for (input, description) in cases {
-        assert!(
-            validate_hex(input).is_err(),
-            "Expected '{}' to be invalid ({})",
-            input,
-            description
-        );
+    for (input, desc) in cases {
+        assert!(validate_hex(input).is_err(), "Expected '{}' to be invalid ({})", input, desc);
     }
 }
 
+//
+// 6. ANSI validation
+//
 #[test]
 fn test_validate_ansi_valid_values() {
     assert!(validate_ansi(0).is_ok());
@@ -106,13 +119,15 @@ fn test_validate_ansi_valid_values() {
 
 #[test]
 fn test_validate_ansi_invalid_values() {
-    assert!(matches!(
-        validate_ansi(-1),
-        Err(ColorConversionError::InvalidAnsiValue(-1))
-    ));
+    assert!(matches!(validate_ansi(-1), Err(ColorConversionError::InvalidAnsiValue(-1))));
+    assert!(matches!(validate_ansi(256), Err(ColorConversionError::InvalidAnsiValue(256))));
+}
 
-    assert!(matches!(
-        validate_ansi(256),
-        Err(ColorConversionError::InvalidAnsiValue(256))
-    ));
+#[test]
+fn test_validate_ansi_error_value() {
+    if let Err(ColorConversionError::InvalidAnsiValue(val)) = validate_ansi(300) {
+        assert_eq!(val, 300);
+    } else {
+        panic!("Expected InvalidAnsiValue error");
+    }
 }

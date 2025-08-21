@@ -262,12 +262,14 @@ fn test_color_ref_2d_vector() {
     let styled: Vec<Vec<String>> = color(46u8, &texts_2d).unwrap(); // reference
     let expected: Vec<Vec<String>> = texts_2d
         .iter()
-        .map(|row| row.iter().map(|t| format!("\x1b[38;5;46m{}\x1b[0m", t)).collect())
+        .map(|row| {
+            row.iter()
+                .map(|t| format!("\x1b[38;5;46m{}\x1b[0m", t))
+                .collect()
+        })
         .collect();
     assert_eq!(styled, expected);
 }
-
-
 
 #[test]
 fn test_vector_foreground() {

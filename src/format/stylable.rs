@@ -163,4 +163,3 @@ impl Stylable for &Vec<Vec<String>> {
         (*self).apply_result(f)
     }
 }
-
