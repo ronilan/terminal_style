@@ -1,6 +1,6 @@
 # terminal_style
 
-A minimal Rust library for styling terminal text using ANSI escape codes. Supports 256-color as well as bold, italic, faint, underline, and inverse formatting. Easily apply foreground/background colors from hex, RGB, or ANSI 8-bit values to strings, 1D vectors, and 2D vectors. Perfect for simple CLI tools.
+A minimal Rust library for styling terminal text using ANSI escape codes. Supports **24-bit TrueColor (RGB)** as its primary format, alongside 256-color (8-bit) ANSI quantization. Easily apply foreground/background colors from hex, RGB, or ANSI 8-bit values to strings, 1D vectors, and 2D vectors. Perfect for simple CLI tools.
 
 <img src="./media/social.png" width="450"> 
 
@@ -14,14 +14,32 @@ cargo add terminal_style
 
 ## Features
 
+- **24-bit TrueColor (RGB)** support for smooth gradients
+- **8-bit ANSI** quantization for legacy terminal support
 - Convert RGB or Hex to ANSI 256-color
-- Apply foreground/background color to strings
+- Apply foreground/background color to strings, vectors, and 2D vectors
 - Format text as **bold**, *italic*, faint, inverse, or underline
 - Graceful handling of invalid color inputs
 
 ## Usage
 
 Formatting functions work with strings, vectors, and 2D vectors of strings seamlessly. It also supports references, so you can pass either owned or borrowed values.
+
+### Color Depth Options
+
+`terminal_style` provides two sets of functions for color styling:
+- `color` / `background`: Aliases for `color_rgb` / `background_rgb`. Unconditionally generates 24-bit TrueColor sequences.
+- `color_ansi` / `background_ansi`: Quantizes any color input to the nearest 8-bit ANSI index (256-color palette).
+
+```rust
+use terminal_style::format::{color_rgb, color_ansi};
+
+// 24-bit TrueColor: \x1b[38;2;255;20;147m
+let rgb = color_rgb("#FF1493", "Deep Pink")?;
+
+// 8-bit ANSI: \x1b[38;5;198m
+let ansi = color_ansi("#FF1493", "Deep Pink")?;
+```
 
 ### Supported Input Types
 
@@ -41,7 +59,7 @@ Formatting functions work with strings, vectors, and 2D vectors of strings seaml
 ```rust
 
 use terminal_style::{
-    format::{bold, underline, color, background},
+    format::{bold, underline, color, background, color_ansi},
     color::ColorConversionError,
 };
 
@@ -50,26 +68,26 @@ fn main() -> Result<(), ColorConversionError> {
     let text = "Styled!";
 
     // Using `?` to propagate errors if color conversion fails
+    // By default, `color` and `background` use 24-bit TrueColor
     let fg = color("#FF1493", text)?;       // Foreground color (pink)
-    let bg = background("#EEDDFF", text)?;  // Background color (lavender)
+    let bg = background("#8257AD", text)?;  // Background color (lavender)
     let bolded = bold(fg.clone());          // Bold formatting
 
     println!("FG: {}", fg);
     println!("BG: {}", bg);
     println!("Bold: {}", bolded);
 
+    // Explicitly use 8-bit ANSI for legacy terminals
+    let legacy = color_ansi([0, 255, 0], "I am 8-bit Green")?;
+    println!("{}", legacy);
+
     // --- 1D vector of strings ---
     let texts_1d = vec!["Red".to_string(), "Green".to_string(), "Blue".to_string()];
     let colored_1d = color([255, 0, 0], texts_1d.clone())?;  // Red foreground
     let bolded_1d = bold(texts_1d.clone());
 
-    println!("\n1D Colored vector:");
+    println!("\n1D Colored vector (TrueColor):");
     for line in &colored_1d {
-        println!("{}", line);
-    }
-
-    println!("\n1D Bold vector:");
-    for line in &bolded_1d {
         println!("{}", line);
     }
 
@@ -83,30 +101,7 @@ fn main() -> Result<(), ColorConversionError> {
     let bg_colored_2d = background([255, 105, 180], texts_2d.clone())?; // Pink background
     let bold_underline_bg_2d = bold(underline(bg_colored_2d.clone()));
 
-    // Output demo
-    println!("\n2D Bold vector:");
-    for row in &bolded_2d {
-        for cell in row {
-            print!("{} ", cell);
-        }
-        println!();
-    }
-
-    println!("\n2D Background colored vector:");
-    for row in &bg_colored_2d {
-        for cell in row {
-            print!("{} ", cell);
-        }
-        println!();
-    }
-
-    println!("\n2D Bold + Underline + Background colored vector:");
-    for row in &bold_underline_bg_2d {
-        for cell in row {
-            print!("{} ", cell);
-        }
-        println!();
-    }
+    // Output demo omitted for brevity...
 
     Ok(())
 }
@@ -134,7 +129,7 @@ fn main() {
     assert_eq!(hex_to_ansi8("0000FF"), 21);
 
     // ANSI to RGB
-    assert_eq!(ansi8_to_rgb(46), Some([0, 255, 0]));
+    assert_eq!(ansi8_to_rgb(196), [255, 0, 0]);
 
     // ANSI to HEX
     assert_eq!(ansi8_to_hex(196), "#FF0000"); // Red

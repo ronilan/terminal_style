@@ -1,11 +1,21 @@
-// stylable.rs
+/// A trait for applying terminal styling to different types of text data.
+///
+/// `Stylable` allows formatting functions to operate on single strings,
+/// flat vectors, or even 2D vectors (grids) of strings.
 pub trait Stylable {
+    /// The resulting type after styling is applied.
     type Output;
 
+    /// Applies a non-failing styling closure to each element of the data.
     fn apply<F>(&self, f: F) -> Self::Output
     where
         F: Fn(&str) -> String;
 
+    /// Applies a fallible styling closure to each element of the data.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if any single application of the closure fails.
     fn apply_result<F, E>(&self, f: F) -> Result<Self::Output, E>
     where
         F: Fn(&str) -> Result<String, E>,

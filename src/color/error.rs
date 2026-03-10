@@ -1,10 +1,15 @@
 use std::fmt;
 
-#[derive(Debug)]
+/// Errors that can occur during color conversion or validation.
+#[derive(Debug, PartialEq)]
 pub enum ColorConversionError {
+    /// Invalid hexadecimal color string.
     InvalidHex(String),
+    /// Invalid RGB component value.
     InvalidRgb(String),
+    /// ANSI 8-bit color value out of range (0-255).
     InvalidAnsiValue(i32),
+    /// Could not determine the color format of the input.
     UnknownFormat(String),
 }
 

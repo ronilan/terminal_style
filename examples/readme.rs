@@ -1,6 +1,6 @@
 use terminal_style::{
     color::ColorConversionError,
-    format::{background, bold, color, underline},
+    format::{background, bold, color, color_ansi, underline},
 };
 
 fn main() -> Result<(), ColorConversionError> {
@@ -8,20 +8,25 @@ fn main() -> Result<(), ColorConversionError> {
     let text = "Styled!";
 
     // Using `?` to propagate errors if color conversion fails
+    // By default, `color` and `background` use 24-bit TrueColor
     let fg = color("#FF1493", text)?; // Foreground color (pink)
-    let bg = background("#EEDDFF", text)?; // Background color (lavender)
+    let bg = background("#8257AD", text)?; // Background color
     let bolded = bold(fg.clone()); // Bold formatting
 
     println!("FG: {}", fg);
     println!("BG: {}", bg);
     println!("Bold: {}", bolded);
 
+    // Explicitly use 8-bit ANSI for legacy terminals
+    let legacy = color_ansi([0, 255, 0], "I am 8-bit Green")?;
+    println!("{}", legacy);
+
     // --- 1D vector of strings ---
     let texts_1d = vec!["Red".to_string(), "Green".to_string(), "Blue".to_string()];
-    let colored_1d = color([255, 0, 0], texts_1d.clone())?; // Red foreground
+    let colored_1d = color([255, 0, 0], texts_1d.clone())?; // Red foreground (TrueColor)
     let bolded_1d = bold(texts_1d.clone());
 
-    println!("\n1D Colored vector:");
+    println!("\n1D Colored vector (TrueColor):");
     for line in &colored_1d {
         println!("{}", line);
     }

@@ -1,21 +1,48 @@
-use terminal_style::format::{background, bold, color, faint, inverse, italic, underline};
+use terminal_style::format::{
+    background, background_ansi, background_rgb, bold, color, color_ansi, color_rgb, faint, inverse,
+    italic, underline,
+};
+
+#[test]
+fn test_color_ansi() {
+    let styled = color_ansi([255, 0, 0], "Red").unwrap();
+    assert_eq!(styled, "\x1b[38;5;196mRed\x1b[0m");
+}
+
+#[test]
+fn test_background_ansi() {
+    let styled = background_ansi([0, 0, 255], "Blue").unwrap();
+    assert_eq!(styled, "\x1b[48;5;21mBlue\x1b[0m");
+}
+
+#[test]
+fn test_color_rgb() {
+    let styled = color_rgb([255, 0, 0], "Red").unwrap();
+    assert_eq!(styled, "\x1b[38;2;255;0;0mRed\x1b[0m");
+}
+
+#[test]
+fn test_background_rgb() {
+    let styled = background_rgb([0, 0, 255], "Blue").unwrap();
+    assert_eq!(styled, "\x1b[48;2;0;0;255mBlue\x1b[0m");
+}
 
 #[test]
 fn test_background_with_rgb_array() {
     let styled = background([0, 0, 255], "Blue").unwrap();
-    assert_eq!(styled, "\x1b[48;5;21mBlue\x1b[0m");
+    assert_eq!(styled, "\x1b[48;2;0;0;255mBlue\x1b[0m");
 }
 
 #[test]
 fn test_background_with_u8() {
     let styled = background(226u8, "Yellow Background").unwrap();
-    assert_eq!(styled, "\x1b[48;5;226mYellow Background\x1b[0m");
+    assert_eq!(styled, "\x1b[48;2;255;255;0mYellow Background\x1b[0m");
 }
 
 #[test]
 fn test_background_with_hex_string() {
     let styled = background("#00FFFF", "Cyan").unwrap();
-    assert_eq!(styled, "\x1b[48;5;51mCyan\x1b[0m");
+    assert_eq!(styled, "\x1b[48;2;0;255;255mCyan\x1b[0m");
 }
 
 #[test]
@@ -27,19 +54,19 @@ fn test_background_with_invalid_hex() {
 #[test]
 fn test_color_with_rgb_array() {
     let styled = color([255, 0, 0], "Red").unwrap();
-    assert_eq!(styled, "\x1b[38;5;196mRed\x1b[0m");
+    assert_eq!(styled, "\x1b[38;2;255;0;0mRed\x1b[0m");
 }
 
 #[test]
 fn test_color_with_u8() {
     let styled = color(82u8, "ANSI Green").unwrap();
-    assert_eq!(styled, "\x1b[38;5;82mANSI Green\x1b[0m");
+    assert_eq!(styled, "\x1b[38;2;95;255;0mANSI Green\x1b[0m");
 }
 
 #[test]
 fn test_color_with_hex_string() {
     let styled = color("#00FF00", "Green").unwrap();
-    assert_eq!(styled, "\x1b[38;5;46mGreen\x1b[0m");
+    assert_eq!(styled, "\x1b[38;2;0;255;0mGreen\x1b[0m");
 }
 
 #[test]
@@ -214,7 +241,7 @@ fn test_bold_ref_string() {
 fn test_color_ref_string() {
     let s = String::from("Red");
     let result: String = color(196u8, &s).unwrap();
-    assert_eq!(result, "\x1b[38;5;196mRed\x1b[0m");
+    assert_eq!(result, "\x1b[38;2;255;0;0mRed\x1b[0m");
 }
 
 #[test]
@@ -234,7 +261,7 @@ fn test_color_ref_vector() {
     let styled: Vec<String> = color(196u8, &texts).unwrap();
     let expected: Vec<String> = texts
         .iter()
-        .map(|t| format!("\x1b[38;5;196m{}\x1b[0m", t))
+        .map(|t| format!("\x1b[38;2;255;0;0m{}\x1b[0m", t))
         .collect();
     assert_eq!(styled, expected);
 }
@@ -264,7 +291,7 @@ fn test_color_ref_2d_vector() {
         .iter()
         .map(|row| {
             row.iter()
-                .map(|t| format!("\x1b[38;5;46m{}\x1b[0m", t))
+                .map(|t| format!("\x1b[38;2;0;255;0m{}\x1b[0m", t))
                 .collect()
         })
         .collect();
@@ -277,7 +304,7 @@ fn test_vector_foreground() {
     let colored: Vec<String> = color(196u8, texts.clone()).unwrap(); // ANSI Red
     let expected: Vec<String> = texts
         .iter()
-        .map(|t| format!("\x1b[38;5;196m{}\x1b[0m", t))
+        .map(|t| format!("\x1b[38;2;255;0;0m{}\x1b[0m", t))
         .collect();
     assert_eq!(colored, expected);
 }
@@ -288,7 +315,7 @@ fn test_vector_background() {
     let bg_colored: Vec<String> = background(21u8, texts.clone()).unwrap(); // ANSI Blue BG
     let expected: Vec<String> = texts
         .iter()
-        .map(|t| format!("\x1b[48;5;21m{}\x1b[0m", t))
+        .map(|t| format!("\x1b[48;2;0;0;255m{}\x1b[0m", t))
         .collect();
     assert_eq!(bg_colored, expected);
 }
@@ -429,7 +456,7 @@ fn test_2d_vector_foreground() {
         .iter()
         .map(|row| {
             row.iter()
-                .map(|t| format!("\x1b[38;5;46m{}\x1b[0m", t))
+                .map(|t| format!("\x1b[38;2;0;255;0m{}\x1b[0m", t))
                 .collect()
         })
         .collect();
@@ -447,7 +474,7 @@ fn test_2d_vector_background() {
         .iter()
         .map(|row| {
             row.iter()
-                .map(|t| format!("\x1b[48;5;226m{}\x1b[0m", t))
+                .map(|t| format!("\x1b[48;2;255;255;0m{}\x1b[0m", t))
                 .collect()
         })
         .collect();
